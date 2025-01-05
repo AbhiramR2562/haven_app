@@ -3,6 +3,7 @@ import 'package:haven/controllers/cart_controller.dart';
 import 'package:haven/services/auth_service.dart';
 import 'package:haven/services/user_sharedpreference.dart';
 import 'package:haven/utils/app_theme.dart';
+import 'package:haven/views/login_page.dart';
 import 'package:haven/widget/bottom_nav_bar_widget.dart';
 import 'package:haven/views/cart_page.dart';
 import 'package:haven/views/shop_page.dart';
@@ -34,7 +35,7 @@ class _HomePageState extends State<HomePage> {
 
   // Retrieve user data (name) from SharedPreferences
   Future<void> _getUserName() async {
-    final userData = await _sharedPreferencesService.getUserData();
+    final userData = await _sharedPreferencesService.getUserDetails();
     setState(() {
       userName = userData['name']; // Retrieve and store the name
     });
@@ -55,11 +56,25 @@ class _HomePageState extends State<HomePage> {
     // Cart Page
     const CartPage(),
   ];
+
   // Logout
-  void logOut() {
-    // Auth service
+  void logOut(BuildContext context) async {
     final authService = AuthService();
-    authService.signOut();
+
+    try {
+      await authService.signOut();
+
+      // Navigate to LoginPage explicitly after signing out
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+        (route) => false, // Remove all previous routes
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error during logout: ${e.toString()}')),
+      );
+    }
   }
 
   @override
@@ -106,7 +121,7 @@ class _HomePageState extends State<HomePage> {
 
             GestureDetector(
               onTap: () {
-                logOut();
+                logOut(context);
               },
               child: const Padding(
                 padding: EdgeInsets.only(left: 25.0, bottom: 25.0),

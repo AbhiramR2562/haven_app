@@ -3,35 +3,69 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:haven/services/auth_service.dart';
 import 'package:haven/utils/snackbar_helper.dart';
+import 'package:haven/views/home_page.dart';
 import 'package:haven/widget/my_button_widget.dart';
 import 'package:haven/widget/my_textfield_widget.dart';
 import 'package:haven/views/register_page.dart';
 
-class LoginPage extends StatelessWidget {
-  // Email and Password (pw) Controllers
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _pwController = TextEditingController();
-
+class LoginPage extends StatefulWidget {
   LoginPage({
     super.key,
   });
 
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  // Email and Password (pw) Controllers
+  final TextEditingController _emailController = TextEditingController();
+
+  final TextEditingController _pwController = TextEditingController();
+
+  bool _isLoading = false;
+
   // Login Method
   void login(BuildContext context) async {
-    // auth service
+    // Validate input fields
+    if (_emailController.text.trim().isEmpty ||
+        _pwController.text.trim().isEmpty) {
+      showSnackBar(context, 'Please enter both email and password.');
+      return;
+    }
+
+    // Auth service instance
     final authService = AuthService();
 
-    // Login
+    // Show loading indicator
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
+      // Attempt login
       await authService.signInWithEmailPassword(
-        _emailController.text,
-        _pwController.text,
+        _emailController.text.trim(),
+        _pwController.text.trim(),
       );
 
+      // Navigate to Home Page on success
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+
+      // Display success message
       showSnackBar(context, 'Login successful!');
     } catch (e) {
-      showSnackBar(context, e.toString());
-      log(e.toString());
+      // Display error message
+      showSnackBar(context, 'Error: ${e.toString()}');
+      log('Login error: ${e.toString()}');
+    } finally {
+      // Hide loading indicator
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -68,13 +102,15 @@ class LoginPage extends StatelessWidget {
               isObscure: true,
             ),
             const SizedBox(height: 25),
-            MyButton(
-              text: "Login",
-              onTap: () {
-                log("Login tapped");
-                login(context);
-              },
-            ),
+            _isLoading
+                ? const CircularProgressIndicator()
+                : MyButton(
+                    text: "Login",
+                    onTap: () {
+                      log("Login tapped");
+                      login(context);
+                    },
+                  ),
             const SizedBox(height: 25),
             // Register now
             Row(

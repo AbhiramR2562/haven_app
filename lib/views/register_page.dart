@@ -1,3 +1,7 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:haven/services/auth_service.dart';
 import 'package:haven/services/user_sharedpreference.dart';
@@ -34,17 +38,21 @@ class _RegisterPageState extends State<RegisterPage> {
 
   // Register method
   void register(BuildContext context) async {
-    final email = _emailController.text.trim();
-    final password = _pwController.text.trim();
-    final confirmPassword = _confirmPwController.text.trim();
-    final name = _nameController.text.trim();
+    String email = _emailController.text.trim();
+    String password = _pwController.text.trim();
+    String confirmPassword = _confirmPwController.text.trim();
+    String name = _nameController.text.trim();
 
     if (email.isEmpty ||
         password.isEmpty ||
         confirmPassword.isEmpty ||
         name.isEmpty) {
-      // Show message
-      showSnackBar(context, 'All fields are required.');
+      showSnackBar(context, 'Please fill all fields');
+      return;
+    }
+
+    if (password != confirmPassword) {
+      showSnackBar(context, 'Passwords do not match');
       return;
     }
 
@@ -53,30 +61,41 @@ class _RegisterPageState extends State<RegisterPage> {
     });
 
     try {
-      String result = await _authService.createUser(
-        email: email,
-        password: password,
-        name: name,
-        confirmPassword: confirmPassword,
-      );
+      // Sign up the user
+      UserCredential userCredential =
+          await _authService.signUpWithEmailPassword(email, password);
 
-      if (result == 'User created successfully') {
-        // Set the scratch card flag
-        await _sharedPreferencesService.setScratchCardShown(false);
+      // Save the user's name and email in Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .set({'name': name, 'email': email});
 
-        // Save user data
-        await _sharedPreferencesService.setUserData(email, name);
+      // Re-fetch the current user to ensure it's initialized
+      User? user = FirebaseAuth.instance.currentUser;
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
-      } else {
-        showSnackBar(context, result);
+      if (user == null) {
+        throw Exception('User is not initialized after registration.');
       }
+
+      // Set the new user flag
+      await _sharedPreferencesService.setNewUser(true);
+
+      // Save user details locally (optional)
+      await _sharedPreferencesService.saveUserDetails(email: email, name: name);
+
+      // Navigate to Home Page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomePage(),
+        ),
+      );
+      showSnackBar(context, 'Registration successful');
+      log('Registration successful');
     } catch (e) {
+      log('Error during registration: $e');
       showSnackBar(context, 'Error: ${e.toString()}');
-      print('Error: ${e.toString()}');
     } finally {
       setState(() {
         _isLoading = false;

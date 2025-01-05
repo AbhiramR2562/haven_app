@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:haven/controllers/cart_controller.dart';
 import 'package:haven/firebase_options.dart';
 import 'package:haven/services/auth_gate.dart';
+import 'package:haven/views/login_page.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -26,9 +27,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home:
-          //  HomePage(),
-          AuthGate(),
+      home: AuthGate(),
     );
   }
 }

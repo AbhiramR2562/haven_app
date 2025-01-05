@@ -27,20 +27,20 @@ class _ShopPageState extends State<ShopPage> {
   @override
   void initState() {
     super.initState();
-    _checkAndShowScratchCard();
+    _checkNewUser();
   }
 
-  void _checkAndShowScratchCard() async {
-    bool isScratchCardShown =
-        await _sharedPreferencesService.isScratchCardShown();
+  // Check if the user is new and has not seen the scratch card
+  Future<void> _checkNewUser() async {
+    bool isNewUser = await _sharedPreferencesService.isNewUser();
 
-    if (!isScratchCardShown) {
-      // Show the scratch card
+    if (isNewUser) {
       showDialog(
-          context: context, builder: (context) => ScratchCardDialogBox());
-
-// Update the flag to true
-      await _sharedPreferencesService.setScratchCardShown(true);
+          context: context,
+          builder: (context) =>
+              ScratchCardDialogBox()); // Show scratch card dialog
+      await _sharedPreferencesService
+          .setNewUser(false); // Reset the flag after showing the dialog
     }
   }
 
@@ -62,13 +62,6 @@ class _ShopPageState extends State<ShopPage> {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (context) => ProductViewPage(
-              //               product: products[index],
-              //             )));
-
               Navigator.push(
                 context,
                 AnimationPageRoute(

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:haven/views/home_page.dart';
-import 'package:haven/views/login_page.dart';
+import 'package:haven/views/register_page.dart';
 
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
@@ -9,15 +9,15 @@ class AuthGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder(
+      body: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
-            // User is logged in
+            // If the snapshot has data
             if (snapshot.hasData) {
+              // show the HomePage
               return HomePage();
             } else {
-              // User not logged in
-              return LoginPage();
+              return RegisterPage();
             }
           }),
     );
