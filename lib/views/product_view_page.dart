@@ -78,16 +78,6 @@ class _ProductViewPageState extends State<ProductViewPage> {
             MyButton(
               text: "Check Out",
               onTap: () {
-                // Navigate to the CheckoutPage
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => CheckoutPage(
-                //       product: widget.product,
-                //       quantity: _quantity,
-                //     ),
-                //   ),
-                // );
                 // Show the CheckoutDialog when proceeding to payment
                 showDialog(
                     context: context,

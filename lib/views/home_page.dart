@@ -10,7 +10,7 @@ import 'package:haven/views/shop_page.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -60,9 +60,14 @@ class _HomePageState extends State<HomePage> {
   // Logout
   void logOut(BuildContext context) async {
     final authService = AuthService();
+    final sharedPreferencesService = SharedPreferencesService();
 
     try {
       await authService.signOut();
+
+      // Clear the user data from shared preferences
+      await sharedPreferencesService
+          .clearUserData(); // Clear the stored user details
 
       // Navigate to LoginPage explicitly after signing out
       Navigator.pushAndRemoveUntil(
@@ -163,9 +168,6 @@ class _HomePageState extends State<HomePage> {
               backgroundImage: AssetImage(
                   'assets/images/avatarprofile2.png'), // Replace with profile image path
             ),
-            // Welcome text (centered)
-
-            // You can add other actions here if needed
           ],
         ),
         centerTitle: true, // Center the title for better alignment

@@ -41,21 +41,6 @@ class AuthService {
     }
   }
 
-  // // Sign out
-  // Future<void> signOut() async {
-  //   User? currentUser = _auth.currentUser;
-
-  //   if (currentUser != null) {
-  //     try {
-  //       await _auth.signOut();
-  //     } catch (e) {
-  //       throw Exception('Error while signing out: ${e.toString()}');
-  //     }
-  //   } else {
-  //     throw Exception('No user is currently logged in.');
-  //   }
-  // }
-
   // Sign out
   Future<void> signOut() async {
     try {

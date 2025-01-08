@@ -263,8 +263,6 @@ class _ReceiptPageState extends State<ReceiptPage> {
     final filePath =
         '${outputDir?.path}/receipt_${DateTime.now().millisecondsSinceEpoch}.pdf';
 
-    // This is a placeholder for sharing functionality
-    // You would typically use a package like `share` or `url_launcher` for this.
     print('Receipt ready for sharing at: $filePath');
   }
 }

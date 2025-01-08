@@ -6,9 +6,12 @@ class AnimationPageRoute<T> extends PageRouteBuilder<T> {
       : super(
           pageBuilder: (context, animation, secondaryAnimation) => page,
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            const begin = Offset(1.0, 0.0); // Start from the right (horizontal)
-            const end = Offset.zero; // End at the original position
-            const curve = Curves.easeInOut; // Smooth transition
+            // Start from the right (horizontal)
+            const begin = Offset(1.0, 0.0);
+            // End at the original position
+            const end = Offset.zero;
+            // Smooth transition
+            const curve = Curves.easeInOut;
 
             var tween =
                 Tween(begin: begin, end: end).chain(CurveTween(curve: curve));

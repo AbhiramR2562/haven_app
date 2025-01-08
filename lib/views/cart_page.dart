@@ -83,14 +83,6 @@ class CartPage extends StatelessWidget {
                           cartController: cartController,
                         ),
                       );
-
-                      // Navigate to the CheckoutPage
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => const CheckoutPage(),
-                      //   ),
-                      // );
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(

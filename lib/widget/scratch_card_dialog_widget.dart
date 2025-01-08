@@ -134,12 +134,6 @@ class _ScratchCardDialogBoxState extends State<ScratchCardDialogBox> {
                     ],
                   ),
                 )
-          // Row(
-          //   children: [
-          //     // MyButton(text: "Cancel", onTap: () {}),
-          //     MyButton(text: "Add to cart", onTap: () {}),
-          //   ],
-          // )
         ],
       ),
     );

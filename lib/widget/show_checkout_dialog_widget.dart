@@ -11,16 +11,18 @@ class CheckoutDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final totalAmount = cartController.cart.entries.fold<double>(
-      0.0,
-      (sum, entry) => sum + entry.key.price * entry.value,
-    );
+    // Get the cart entries once and store them in a local variable
+    final cartEntries = cartController.cart.entries;
 
-    // Calculate total quantity of all items in the cart
-    final totalQuantity = cartController.cart.entries.fold<int>(
-      0,
-      (sum, entry) => sum + entry.value,
-    );
+// Calculate the total amount and total quantity in a single loop
+    double totalAmount = 0.0;
+    int totalQuantity = 0;
+
+    for (var entry in cartEntries) {
+      totalAmount +=
+          entry.key.price * entry.value; // Accumulate the total amount
+      totalQuantity += entry.value; // Accumulate the total quantity
+    }
 
     // Generate a list of products for the receipt dialog
     final products = cartController.cart.entries.map((entry) {
@@ -42,28 +44,25 @@ class CheckoutDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // Display Cart Details
-          ...cartController.cart.entries.map((entry) {
-            final product = entry.key;
-            final quantity = entry.value;
-
-            return Row(
+          //iterates over all the entries in the cartController.cart
+          for (var entry in cartController.cart.entries)
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Image.asset(
-                    product.imageUrl,
+                    entry.key.imageUrl,
                     height: 50,
                     width: 50,
                     fit: BoxFit.cover,
                   ),
                 ),
-                Text(product.name, style: const TextStyle(fontSize: 14)),
-                Text('x$quantity'),
-                Text('\$${(product.price * quantity).toStringAsFixed(2)}'),
+                Text(entry.key.name, style: const TextStyle(fontSize: 14)),
+                Text('x${entry.value}'),
+                Text('\$${(entry.key.price * entry.value).toStringAsFixed(2)}'),
               ],
-            );
-          }).toList(),
+            ),
           const Divider(),
           // Display Total Price
           Row(
